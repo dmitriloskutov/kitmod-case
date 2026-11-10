@@ -226,11 +226,12 @@
       below.style.setProperty('--shift', `${EXTRA_HEIGHT}px`);
       extra.classList.add('open');
       extra.getBoundingClientRect();
+      scrollTo({ top: $('.dash', extra).getBoundingClientRect().top + scrollY - 118 * scale, behavior: calm ? 'auto' : 'smooth' });
       items.forEach((el) => { el.classList.add('in'); settle(el); });
       extraTimer = setTimeout(measure, 820);
     } else {
-      /* Keep the button under the cursor while the block closes. */
-      scrollTo({ top: Math.max(0, scrollY - EXTRA_HEIGHT), behavior: calm ? 'auto' : 'smooth' });
+      /* Go to the next block; its final position is known before the page moves up. */
+      scrollTo({ top: Math.max(0, $('#price').getBoundingClientRect().top + scrollY - EXTRA_HEIGHT * scale), behavior: calm ? 'auto' : 'smooth' });
       below.style.setProperty('--shift', '0px');
       items.forEach((el) => el.classList.remove('in', 'settled'));
       extraTimer = setTimeout(() => {
@@ -307,6 +308,14 @@
   const pmStage = $('#pmStage');
   const pmThumbs = $('#pmThumbs');
   const pmCount = $('#pmCount');
+  const pmBody = $('#pmBody');
+  const pmMore = $('#pmMore');
+  function updatePmHint() {
+    const left = pmBody.scrollHeight - pmBody.clientHeight - pmBody.scrollTop;
+    pmMore.classList.toggle('on', pm.open && mobileMq.matches && left > 28);
+  }
+  pmBody.addEventListener('scroll', updatePmHint, { passive: true });
+  addEventListener('resize', updatePmHint);
   let pmIndex = 0;
   let pmSize = 4;
 
@@ -320,13 +329,28 @@
     });
     pmCount.textContent = `${pmIndex + 1} / ${pmSize}`;
   }
+  const galleryUrl = (n, k) => `assets/projects/p${n}-${k}${mobileMq.matches ? '-m' : ''}.webp`;
+  /* Photos start loading when a project comes near the screen, so the popup opens ready. */
+  const preloaded = new Set();
+  const preloader = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      preloader.unobserve(entry.target);
+      const n = Number($('[data-project]', entry.target).dataset.project) + 1;
+      if (preloaded.has(n)) return;
+      preloaded.add(n);
+      for (let k = 1; k <= 4; k += 1) new Image().src = galleryUrl(n, k);
+    });
+  }, { rootMargin: '700px 0px' });
+  $$('.card-photo, .m-project').forEach((el) => preloader.observe(el));
+
   let lastProject = 0;
   function openProject(p, slide) {
     lastProject = p;
     const d = projects[p];
     const n = p + 1;
     pmSize = 4;
-    pmStage.innerHTML = Array.from({ length: pmSize }, (_, k) => `<img src="assets/projects/p${n}-${k + 1}.webp" alt="${d.cat}, ${d.place}, фото ${k + 1}" draggable="false">`).join('');
+    pmStage.innerHTML = Array.from({ length: pmSize }, (_, k) => `<img src="${galleryUrl(n, k + 1)}" alt="${d.cat}, ${d.place}, фото ${k + 1}" draggable="false" decoding="async" style="background:#1c1c1c url(assets/projects/p${n}-${k + 1}-t.webp) center / cover">`).join('');
     pmThumbs.innerHTML = Array.from({ length: pmSize }, (_, k) => `<button type="button" aria-label="Фото ${k + 1}"><img src="assets/projects/p${n}-${k + 1}-t.webp" alt=""></button>`).join('');
     [...pmThumbs.children].forEach((b, k) => b.addEventListener('click', () => showSlide(k)));
     $('#pmEyebrow').textContent = `${d.cat} · ${d.area}`;
@@ -334,7 +358,9 @@
     $('#pmFacts').innerHTML = [['Площадь', d.area], ['Стиль', d.cat], ['Планировка', d.rooms], ['Срок реализации', d.term]].map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
     $('#pmText').innerHTML = d.text.map((t) => `<p>${t}</p>`).join('');
     showSlide(slide || 0, true);
+    pmBody.scrollTop = 0;
     openModal(pm);
+    updatePmHint();
   }
   document.addEventListener('click', (e) => {
     const trigger = e.target.closest('[data-project]');
@@ -468,7 +494,13 @@
   const mExtra = $('#mExtra');
   const mMoreBtn = $('#mMoreBtn');
   mMoreBtn.addEventListener('click', () => {
+    const extraHeight = mExtra.offsetHeight;
     const open = mExtra.classList.toggle('open');
+    const rem = parseFloat(getComputedStyle(root).fontSize);
+    const target = open
+      ? mExtra.getBoundingClientRect().top + scrollY - 6.4 * rem
+      : $('#m-price').getBoundingClientRect().top + scrollY - extraHeight - 8 * rem;
+    scrollTo({ top: Math.max(0, target), behavior: calm ? 'auto' : 'smooth' });
     mMoreBtn.setAttribute('aria-expanded', String(open));
     $('#mMoreLabel').textContent = open ? 'Скрыть проекты' : 'Показать еще проекты';
     $$('[data-r]', mExtra).forEach((el) => el.classList.add('in'));
