@@ -10,7 +10,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-tap-highlight-color: transparent; touch-action: pan-x pan-y; background: var(--bg-page); scroll-behavior: smooth; scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; }
+html { -webkit-tap-highlight-color: transparent; touch-action: manipulation; background: var(--bg-page); scroll-behavior: smooth; scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg-page); color: #fff; overflow-x: hidden; overflow-x: clip; -webkit-font-smoothing: antialiased; }
 h1, h2, p { margin: 0; font-weight: inherit; }
 a { color: inherit; text-decoration: none; }
@@ -462,7 +462,7 @@ html.loading #ringHost, html.loading #ringDot, html.loading #mRingHost { visibil
   .m-form > p:not(.form-note) { margin: .8rem 0 1.8rem; font: 300 1.55rem/1.4 var(--sans); letter-spacing: -.02em; text-wrap: balance; }
   .m-form .field { position: relative; width: 100%; height: 5.8rem; }
   .m-form .field + .field { margin-top: .7rem; }
-  .m-form .field input { font-size: 1.4rem; }
+  .m-form .field input { font-size: max(16px, 1.4rem); }
   .m-form .m-btn { margin-top: 1.2rem; }
   .m-form .consent { position: relative; margin-top: 1.4rem; font-size: 1.2rem; }
   .m-form .form-note { margin-top: .8rem; font-size: 1.2rem; }

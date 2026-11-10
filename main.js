@@ -34,8 +34,27 @@
   addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && ['+', '=', '-', '_', '0'].includes(e.key)) e.preventDefault();
   });
-  ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (e) => e.preventDefault(), { passive: false }));
-  document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  /* Pinch-zoom is blocked only while the page is at its normal size. If a browser zooms in anyway
+     (iOS ignores user-scalable=no), pinching out works again, and the page returns to normal by itself. */
+  const vv = window.visualViewport;
+  const zoomed = () => !!vv && vv.scale > 1.02;
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (e) => { if (!zoomed()) e.preventDefault(); }, { passive: false }));
+  document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 && !zoomed()) e.preventDefault(); }, { passive: false });
+  const viewportMeta = $('meta[name="viewport"]');
+  const viewportBase = viewportMeta ? viewportMeta.getAttribute('content') : '';
+  let fingers = 0;
+  let zoomTimer = 0;
+  function resetZoom() {
+    if (!zoomed() || fingers || !viewportMeta) return;
+    viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0');
+    setTimeout(() => viewportMeta.setAttribute('content', viewportBase), 400);
+  }
+  const scheduleReset = () => { clearTimeout(zoomTimer); zoomTimer = setTimeout(resetZoom, 900); };
+  document.addEventListener('touchstart', (e) => { fingers = e.touches.length; }, { passive: true });
+  document.addEventListener('touchend', (e) => { fingers = e.touches.length; if (!fingers) scheduleReset(); }, { passive: true });
+  document.addEventListener('touchcancel', () => { fingers = 0; scheduleReset(); }, { passive: true });
+  document.addEventListener('focusout', scheduleReset);
+  if (vv) vv.addEventListener('resize', scheduleReset);
 
   fit();
 
