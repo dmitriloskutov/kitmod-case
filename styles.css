@@ -304,7 +304,7 @@ html.lock { overflow: hidden; }
   .pm[open] { display: block; width: 372px; height: auto; overflow: hidden; background: linear-gradient(#141414 0 50%, #dfd4ca 50% 100%); }
   .pm-body { display: block; max-height: calc(92vh / var(--ms, 1)); max-height: calc(92dvh / var(--ms, 1)); overflow-y: auto; overscroll-behavior: none; -webkit-overflow-scrolling: touch; }
   .pm-left { background: #141414; }
-  .pm-more { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 84px 0 24px; background: linear-gradient(rgba(223, 212, 202, 0), #dfd4ca 60%); font: 700 11px/1 var(--inter); letter-spacing: 1px; text-transform: uppercase; color: #6f5f50; pointer-events: none; opacity: 0; transition: opacity 220ms ease; }
+  .pm-more { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 88px 0 20px; background: linear-gradient(rgba(223, 212, 202, 0), #dfd4ca 60%); font: 700 11px/1 var(--inter); letter-spacing: 1px; text-transform: uppercase; color: #6f5f50; pointer-events: none; opacity: 0; transition: opacity 220ms ease; }
   .pm-more.on { opacity: 1; }
   .pm-more i { width: 9px; height: 9px; margin-top: 1px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); animation: pm-more 1.3s var(--in-out) infinite alternate; }
   .pm-left { height: 340px; }
