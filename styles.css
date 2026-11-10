@@ -304,9 +304,9 @@ html.lock { overflow: hidden; }
   .pm[open] { display: block; width: 372px; height: auto; overflow: hidden; background: linear-gradient(#141414 0 50%, #dfd4ca 50% 100%); }
   .pm-body { display: block; max-height: calc(92vh / var(--ms, 1)); max-height: calc(92dvh / var(--ms, 1)); overflow-y: auto; overscroll-behavior: none; -webkit-overflow-scrolling: touch; }
   .pm-left { background: #141414; }
-  .pm-more { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 46px 0 13px; background: linear-gradient(rgba(223, 212, 202, 0), #dfd4ca 62%); font: 700 11px/1 var(--inter); letter-spacing: 1px; text-transform: uppercase; color: #6f5f50; pointer-events: none; opacity: 0; transition: opacity 220ms ease; }
+  .pm-more { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 84px 0 24px; background: linear-gradient(rgba(223, 212, 202, 0), #dfd4ca 60%); font: 700 11px/1 var(--inter); letter-spacing: 1px; text-transform: uppercase; color: #6f5f50; pointer-events: none; opacity: 0; transition: opacity 220ms ease; }
   .pm-more.on { opacity: 1; }
-  .pm-more i { width: 9px; height: 9px; margin-top: -2px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); animation: pm-more 1.3s var(--in-out) infinite alternate; }
+  .pm-more i { width: 9px; height: 9px; margin-top: 1px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); animation: pm-more 1.3s var(--in-out) infinite alternate; }
   .pm-left { height: 340px; }
   .pm-info { padding: 26px 22px 24px; }
   .pm-title { font-size: 23px; padding-right: 0; }
@@ -348,7 +348,7 @@ html.loading #ringHost, html.loading #ringDot, html.loading #mRingHost { visibil
    ================================================================ */
 .mob, .m-hdr, .m-menu { display: none; }
 @media (max-width: 899px) {
-  html { font-size: clamp(9.2px, calc(100vw / 39), 15.4px); }
+  html { font-size: clamp(9.2px, calc(100vw / 39), 15.4px); overflow-anchor: none; }
   .stage, .hdr { display: none; }
   .mob, .m-hdr { display: block; }
   .m-menu { display: flex; }
@@ -421,6 +421,9 @@ html.loading #ringHost, html.loading #ringDot, html.loading #mRingHost { visibil
   #m-cases > .m-projects { margin-top: 2.4rem; }
   .m-extra { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 620ms var(--drawer); }
   .m-extra.open { grid-template-rows: 1fr; }
+  .m-extra-in { transition: opacity 160ms ease; }
+  .m-extra.fading .m-extra-in { opacity: 0; }
+  .m-extra.instant { transition: none; }
   .m-extra-in { min-height: 0; overflow: hidden; }
   .m-extra .m-projects { padding-top: 1.6rem; }
   .m-project { padding: .8rem; border: 1px dashed #373737; border-radius: 1.8rem; }

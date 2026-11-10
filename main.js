@@ -493,17 +493,42 @@
   /* Mobile: two more projects slide open. */
   const mExtra = $('#mExtra');
   const mMoreBtn = $('#mMoreBtn');
+  const jumpTo = (y) => {
+    const previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    scrollTo(0, y);
+    root.style.scrollBehavior = previous;
+  };
+  const glideTo = (y) => scrollTo({ top: Math.max(0, y), behavior: calm ? 'auto' : 'smooth' });
+  let mExtraBusy = false;
   mMoreBtn.addEventListener('click', () => {
-    const extraHeight = mExtra.offsetHeight;
-    const open = mExtra.classList.toggle('open');
+    if (mExtraBusy) return;
     const rem = parseFloat(getComputedStyle(root).fontSize);
-    const target = open
-      ? mExtra.getBoundingClientRect().top + scrollY - 6.4 * rem
-      : $('#m-price').getBoundingClientRect().top + scrollY - extraHeight - 8 * rem;
-    scrollTo({ top: Math.max(0, target), behavior: calm ? 'auto' : 'smooth' });
+    const open = !mExtra.classList.contains('open');
     mMoreBtn.setAttribute('aria-expanded', String(open));
     $('#mMoreLabel').textContent = open ? 'Скрыть проекты' : 'Показать еще проекты';
-    $$('[data-r]', mExtra).forEach((el) => el.classList.add('in'));
+    if (open) {
+      mExtra.classList.add('open');
+      $$('[data-r]', mExtra).forEach((el) => el.classList.add('in'));
+      glideTo(mExtra.getBoundingClientRect().top + scrollY - 6.4 * rem);
+      return;
+    }
+    /* Closing: fade first, remove the block in one step while keeping the view still, then glide to the next heading. */
+    mExtraBusy = true;
+    mExtra.classList.add('fading');
+    setTimeout(() => {
+      const before = scrollY;
+      const height = mExtra.offsetHeight;
+      mExtra.classList.add('instant');
+      mExtra.classList.remove('open', 'fading');
+      mExtra.getBoundingClientRect();
+      jumpTo(Math.max(0, before - height));
+      mExtra.classList.remove('instant');
+      requestAnimationFrame(() => {
+        glideTo($('#m-price').getBoundingClientRect().top + scrollY - 8 * rem);
+        mExtraBusy = false;
+      });
+    }, calm ? 0 : 170);
   });
   $$('[data-r]', mExtra).forEach((el) => el.classList.add('in'));
 
